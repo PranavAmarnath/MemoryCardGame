@@ -12,17 +12,52 @@ import javax.swing.border.EmptyBorder;
 
 public class View {
 
+    private JDialog dialog;
     private JFrame frame;
     private JPanel mainPanel, timePanel, cardPanel;
+    private JLabel timeLabel;
     private int numCards = 12;
-    private JToggleButton[] memoryButtons = new JToggleButton[numCards];
-    private String[] paths = {"/apple.png", "/bike.png", "/book.png", "/ketchup.png", "/mouse.png", "/orange.png"};
+    private JToggleButton[] memoryButtons;
+    private String[] paths = {"/apple.png", "/bike.png", "/book.png", "/ketchup.png", "/mouse.png", "/orange.png", "/dolphin.png", "/ill-person.png"};
     private ArrayList<Integer> indexList = new ArrayList<>();
-    //private ImageIcon[] images = new ImageIcon[numCards];
     private Timer timer;
     private Thread timerThread;
     
     public View() {
+        dialog = new JDialog(frame, "Choose a difficulty level:");
+        
+        JButton buttonEasy = new JButton("Easy");
+        JButton buttonMedium = new JButton("Medium");
+        JButton buttonHard = new JButton("Hard");
+
+        buttonEasy.addActionListener(e -> {
+            numCards = 6;
+            createMainFrame();
+        });
+        
+        buttonMedium.addActionListener(e -> {
+            numCards = 12;
+            createMainFrame();
+        });
+        
+        buttonHard.addActionListener(e -> {
+            numCards = 16;
+            createMainFrame();
+        });
+
+        JPanel dialogPanel = new JPanel();
+
+        dialogPanel.add(buttonEasy);
+        dialogPanel.add(buttonMedium);
+        dialogPanel.add(buttonHard);
+
+        dialog.add(dialogPanel);
+        
+        dialog.pack();
+        dialog.setVisible(true);
+    }
+    
+    private void createMainFrame() {
         frame = new JFrame("Memory Card Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(525, 600));
@@ -32,7 +67,7 @@ public class View {
         
         timePanel = new JPanel();
         timePanel.setBackground(Color.WHITE);
-        JLabel timeLabel = new JLabel("0", SwingConstants.CENTER);
+        timeLabel = new JLabel("0", SwingConstants.CENTER);
         timePanel.add(timeLabel);
         
         cardPanel = new JPanel();
@@ -40,12 +75,16 @@ public class View {
         cardPanel.setBackground(Color.WHITE);
         cardPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         
+        memoryButtons = new JToggleButton[numCards];
+        
         for(int i = 0; i < numCards; i++) {
             indexList.add(i/2);
         }
         
         for(int i = 0; i < numCards; i++) {
             memoryButtons[i] = new JToggleButton();
+            // used following answer for reading the image
+            // https://stackoverflow.com/questions/4801386/how-do-i-add-an-image-to-a-jbutton/49324649#49324649
             memoryButtons[i].setIcon(new ImageIcon(getClass().getResource("/blank.png")));
             Random random = new Random();
             int index = indexList.get(random.nextInt(indexList.size()));
@@ -56,6 +95,8 @@ public class View {
         
         Random rand = new Random();
 
+        // took inspiration from this question for randomizer implementation
+        // https://stackoverflow.com/questions/4040001/creating-random-numbers-with-no-duplicates
         Set<Integer> randInts = new LinkedHashSet<Integer>();
         while(randInts.size() < numCards) {
             Integer next = rand.nextInt(numCards) + 1;
@@ -75,34 +116,9 @@ public class View {
         frame.pack();
         frame.setVisible(true);
         
-        timerThread = new Thread(() -> {
-            long start = System.currentTimeMillis();
-            while(true) {
-                long time = System.currentTimeMillis() - start;
-                int seconds = (int) (time / 1000);
-                SwingUtilities.invokeLater(() -> {
-                    timeLabel.setText("Time Passed: " + seconds);
-                });
-                try {
-                    Thread.sleep(1000);
-                } catch(Exception e) {
-                    break;
-                }
-            }
-        });
-        timerThread.start();
+        startTimerThread();
 
-        timer = new Timer(2000, e -> {
-            for(int i = 0; i < numCards; i++) {
-                memoryButtons[i].setSelected(false);
-            }
-        });
-        timer.setRepeats(false);
-        timer.start();
-        
-        for(int i = 0; i < numCards; i++) {
-            memoryButtons[i].setSelected(true);
-        }
+        showCardsMomentary(numCards*200);
     }
     
     private void buttonFunctionality(int i) {
@@ -139,13 +155,39 @@ public class View {
         });
     }
     
-    /*
-    private ImageIcon rescaledImage(int i) {
-        Image image = new ImageIcon(getClass().getResource(paths[i])).getImage();
-        image = image.getScaledInstance(120, 140, Image.SCALE_DEFAULT);
-        images[i] = new ImageIcon(image);
-        return images[i];
+    private void startTimerThread() {
+        // used following answer, but adopted to this game
+        // https://stackoverflow.com/questions/6168498/how-to-put-a-timer-on-a-jlabel-to-update-itself-every-second/6168602#6168602
+        timerThread = new Thread(() -> {
+            long start = System.currentTimeMillis();
+            while(true) {
+                long time = System.currentTimeMillis() - start;
+                double seconds = (double) time / (double) 1000;
+                SwingUtilities.invokeLater(() -> {
+                    timeLabel.setText("Time Passed: " + seconds + " sec");
+                });
+                try {
+                    Thread.sleep(0);
+                } catch(Exception e) {
+                    break;
+                }
+            }
+        });
+        timerThread.start();
     }
-    */
+    
+    private void showCardsMomentary(int delay) {
+        for(int i = 0; i < numCards; i++) {
+            memoryButtons[i].setSelected(true);
+        }
+
+        timer = new Timer(delay, e -> {
+            for(int i = 0; i < numCards; i++) {
+                memoryButtons[i].setSelected(false);
+            }
+        });
+        timer.setRepeats(false);
+        timer.start();
+    }
     
 }
