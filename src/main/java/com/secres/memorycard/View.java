@@ -18,6 +18,19 @@ public class View {
     private JLabel timeLabel;
     private int numCards = 12;
     private JToggleButton[] memoryButtons;
+    /*
+    Used the following links for the images in the paths:
+    
+    https://upload.wikimedia.org/wikipedia/commons/4/48/BLANK_ICON.png
+    (orange.png) https://clipartix.com/orange-clipart-image-55466/
+    (apple.png) https://clipartix.com/green-clipart-image-59069/
+    (bike.png) https://clipartix.com/bicycle-clip-art-image-6000/
+    (ketchup.png) https://clipartix.com/ketchup-bottle-clipart-image-60212/
+    (mouse.png) https://clipartix.com/mickey-mouse-clipart-image-52285/
+    (book.png) https://clipartix.com/open-book-clip-art-image-22013/
+    (ill-person.png) https://clipartix.com/ill-person-clipart-image-58178/
+    (dolphin.png) https://clipartix.com/whale-clip-art-image-2923/
+    */
     private String[] paths = {"/apple.png", "/bike.png", "/book.png", "/ketchup.png", "/mouse.png", "/orange.png", "/dolphin.png", "/ill-person.png"};
     private ArrayList<Integer> indexList = new ArrayList<>();
     private Timer timer;
@@ -25,6 +38,7 @@ public class View {
     
     public View() {
         dialog = new JDialog(frame, "Choose a difficulty level:");
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         
         JButton buttonEasy = new JButton("Easy");
         JButton buttonMedium = new JButton("Medium");
