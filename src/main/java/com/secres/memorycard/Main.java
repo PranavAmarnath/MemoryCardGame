@@ -111,14 +111,11 @@ public class Main {
             
             for(int i = 0; i < numCards; i++) {
                 memoryButtons[i] = new JToggleButton();
-                // used following answer for reading the image
-                // https://stackoverflow.com/questions/4801386/how-do-i-add-an-image-to-a-jbutton/49324649#49324649
-                // credits to user ParisaN
                 memoryButtons[i].setIcon(new ImageIcon(getClass().getResource("/blank.png")));
                 Random random = new Random();
                 int index = indexList.get(random.nextInt(indexList.size()));
                 memoryButtons[i].setSelectedIcon(new ImageIcon(getClass().getResource(paths[index])));
-                indexList.remove((Object)index);
+                indexList.remove((Integer) index);
                 buttonFunctionality(i, numCards);
             }
             
@@ -145,10 +142,10 @@ public class Main {
             
             frame.pack();
             frame.setVisible(true);
-            
-            startTimerThread();
 
             showCardsMomentary(numCards, level);
+            
+            startTimerThread(level);
         }
         
         private void buttonFunctionality(int i, int numCards) {
@@ -185,50 +182,102 @@ public class Main {
             });
         }
         
-        private void startTimerThread() {
-            // used following answer, but adopted to this game
-            // https://stackoverflow.com/questions/6168498/how-to-put-a-timer-on-a-jlabel-to-update-itself-every-second/6168602#6168602
-            // credits to user Martijn Courteaux
-            timerThread = new Thread(() -> {
-                long start = System.currentTimeMillis();
-                while(true) {
-                    long time = System.currentTimeMillis() - start;
-                    double seconds = (double) time / (double) 1000;
-                    SwingUtilities.invokeLater(() -> {
-                        timeLabel.setText("Time Passed: " + seconds + " sec");
-                    });
+        private void startTimerThread(String level) {
+            if(level.equals("Easy")) {
+                timerThread = new Thread(() -> {
                     try {
-                        Thread.sleep(0);
-                    } catch(Exception e) {
-                        break;
+                        Thread.sleep(1200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                }
-            });
-            timerThread.start();
+                    long startTime = System.currentTimeMillis();
+                    while(!timerThread.isInterrupted()) {
+                        long currentTime = System.currentTimeMillis() - startTime;
+                        SwingUtilities.invokeLater(() -> {
+                            timeLabel.setText("Time Taken: " + (double) (currentTime) / 1000.0 + " sec");
+                        });
+                        try {
+                            Thread.sleep(0);
+                        } catch (Exception e) {
+                            break;
+                        }
+                    }
+                });
+                timerThread.start();
+            }
+            else if(level.equals("Medium")) {
+                timerThread = new Thread(() -> {
+                    try {
+                        Thread.sleep(2400);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    long startTime = System.currentTimeMillis();
+                    while(!timerThread.isInterrupted()) {
+                        long currentTime = System.currentTimeMillis() - startTime;
+                        SwingUtilities.invokeLater(() -> {
+                            timeLabel.setText("Time Taken: " + (double) (currentTime) / 1000.0 + " sec");
+                        });
+                        try {
+                            Thread.sleep(0);
+                        } catch (Exception e) {
+                            break;
+                        }
+                    }
+                });
+                timerThread.start();
+            }
+            else if(level.equals("Hard")) {
+                timerThread = new Thread(() -> {
+                    try {
+                        Thread.sleep(3200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    long startTime = System.currentTimeMillis();
+                    while(!timerThread.isInterrupted()) {
+                        long currentTime = System.currentTimeMillis() - startTime;
+                        SwingUtilities.invokeLater(() -> {
+                            timeLabel.setText("Time Taken: " + (double) (currentTime) / 1000.0 + " sec");
+                        });
+                        try {
+                            Thread.sleep(0);
+                        } catch (Exception e) {
+                            break;
+                        }
+                    }
+                });
+                timerThread.start();
+            }
         }
         
         private void showCardsMomentary(int numCards, String level) {
-            int delay = 0;
-            
-            if(level.equals("Easy")) {
-                delay = 1200;
-            }
-            else if(level.equals("Medium")) {
-                delay = 2400;
-            }
-            else if(level.equals("Hard")) {
-                delay = 3200;
-            }
-            
             for(int i = 0; i < numCards; i++) {
                 memoryButtons[i].setSelected(true);
             }
-
-            timer = new Timer(delay, e -> {
-                for(int i = 0; i < numCards; i++) {
-                    memoryButtons[i].setSelected(false);
-                }
-            });
+            
+            if(level.equals("Easy")) {
+                timer = new Timer(1200, e -> {
+                    for(int i = 0; i < numCards; i++) {
+                        memoryButtons[i].setSelected(false);
+                    }
+                });
+            }
+            else if(level.equals("Medium")) {
+                timer = new Timer(2400, e -> {
+                    for(int i = 0; i < numCards; i++) {
+                        memoryButtons[i].setSelected(false);
+                    }
+                });
+            }
+            else if(level.equals("Hard")) {
+                timer = new Timer(3200, e -> {
+                    for(int i = 0; i < numCards; i++) {
+                        memoryButtons[i].setSelected(false);
+                    }
+                });
+            }
+            
             timer.setRepeats(false);
             timer.start();
         }

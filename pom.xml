@@ -16,7 +16,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.3</version>
+				<version>3.3.0</version>
 				<executions>
 					<!-- Run shade goal on package phase -->
 					<execution>
@@ -28,7 +28,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.secres.memorycard.main.Main</mainClass>
+									<mainClass>com.secres.memorycard.Main</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
