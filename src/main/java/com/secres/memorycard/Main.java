@@ -29,11 +29,11 @@ public class Main {
     }
     
     class View {
+        
         private JDialog dialog;
         private JFrame frame;
         private JPanel mainPanel, timePanel, cardPanel;
         private JLabel timeLabel;
-        private int numCards = 12;
         private JToggleButton[] memoryButtons;
         /*
         Used the following links for the images in the paths:
@@ -60,22 +60,19 @@ public class Main {
             JButton buttonEasy = new JButton("Easy");
             JButton buttonMedium = new JButton("Medium");
             JButton buttonHard = new JButton("Hard");
-
+            
             buttonEasy.addActionListener(e -> {
-                numCards = 6;
-                createMainFrame();
+                createMainFrame(6, buttonEasy.getText());
             });
             
             buttonMedium.addActionListener(e -> {
-                numCards = 12;
-                createMainFrame();
+                createMainFrame(12, buttonMedium.getText());
             });
             
             buttonHard.addActionListener(e -> {
-                numCards = 16;
-                createMainFrame();
+                createMainFrame(16, buttonHard.getText());
             });
-
+            
             JPanel dialogPanel = new JPanel();
 
             dialogPanel.add(buttonEasy);
@@ -88,8 +85,8 @@ public class Main {
             dialog.setVisible(true);
         }
         
-        private void createMainFrame() {
-            frame = new JFrame("Memory Card Game");
+        private void createMainFrame(int numCards, String level) {
+            frame = new JFrame("Memory Card Game (" + level + ")");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setPreferredSize(new Dimension(525, 600));
             
@@ -122,7 +119,7 @@ public class Main {
                 int index = indexList.get(random.nextInt(indexList.size()));
                 memoryButtons[i].setSelectedIcon(new ImageIcon(getClass().getResource(paths[index])));
                 indexList.remove((Object)index);
-                buttonFunctionality(i);
+                buttonFunctionality(i, numCards);
             }
             
             Random rand = new Random();
@@ -151,10 +148,10 @@ public class Main {
             
             startTimerThread();
 
-            showCardsMomentary(numCards*200);
+            showCardsMomentary(numCards, level);
         }
         
-        private void buttonFunctionality(int i) {
+        private void buttonFunctionality(int i, int numCards) {
             memoryButtons[i].addActionListener(e -> {
                 for(int j = 0; j < numCards; j++) {
                     if(j != i) {
@@ -210,7 +207,19 @@ public class Main {
             timerThread.start();
         }
         
-        private void showCardsMomentary(int delay) {
+        private void showCardsMomentary(int numCards, String level) {
+            int delay = 0;
+            
+            if(level.equals("Easy")) {
+                delay = 1200;
+            }
+            else if(level.equals("Medium")) {
+                delay = 2400;
+            }
+            else if(level.equals("Hard")) {
+                delay = 3200;
+            }
+            
             for(int i = 0; i < numCards; i++) {
                 memoryButtons[i].setSelected(true);
             }
@@ -223,6 +232,7 @@ public class Main {
             timer.setRepeats(false);
             timer.start();
         }
+        
     }
     
     public static void main(String[] args) {
