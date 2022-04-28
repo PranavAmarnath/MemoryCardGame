@@ -1,3 +1,5 @@
+// this code was written collaboratively between 2 partners
+
 package com.secres.memorycard;
 
 import java.awt.BorderLayout;
